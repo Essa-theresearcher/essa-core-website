@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Essa Core - MVP Projects</title>
+  <style>
+    :root{--ink:#0A0906;--ink2:#111009;--gold:#C9A84C;--text:#E8E0D0;--muted:#B8B0A0;--line:rgba(201,168,76,.22)}
+    *{box-sizing:border-box} body{margin:0;background:var(--ink);color:var(--text);font-family:Arial,sans-serif}
+    nav{position:sticky;top:0;background:rgba(10,9,6,.95);border-bottom:1px solid var(--line);padding:16px 24px;display:flex;justify-content:space-between;z-index:2}
+    .logo{color:var(--gold);font-size:1.2rem;font-weight:700}
+    .hero{padding:72px 24px 36px;max-width:1100px;margin:0 auto}
+    h1{font-size:3rem;line-height:1.02;margin:0 0 14px} h1 em{color:var(--gold);font-style:normal}
+    .sub{color:var(--muted);line-height:1.8;max-width:700px}
+    .qa{margin-top:24px;background:var(--ink2);border:1px solid var(--line);padding:16px}
+    .qa b{color:var(--gold)}
+    .projects{padding:20px 24px 80px;max-width:1100px;margin:0 auto}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .card{background:var(--ink2);border:1px solid var(--line);padding:16px}
+    .card h3{margin:0 0 8px;color:var(--gold)}
+    .card p{margin:0 0 12px;color:var(--muted);line-height:1.6}
+    .btn{display:inline-block;text-decoration:none;background:var(--gold);color:#17140d;padding:9px 12px;font-size:.9rem;font-weight:700}
+    .footer{padding:20px 24px;border-top:1px solid var(--line);color:var(--muted)}
+  </style>
+</head>
+<body>
+  <nav><div class="logo">Essa Core</div><div>MVP Demo Suite</div></nav>
+  <section class="hero">
+    <h1>We Build Software <em>That Works.</em></h1>
+    <p class="sub">Cloned master page with the 6 separate MVP systems. Each demo uses a one-time 10-minute view gate.</p>
+    <div class="qa">
+      <p><b>Q:</b> Should all 6 MVPs be separate HTML files or one combined app where you switch between systems?<br><b>A:</b> 6 separate files - one per system.</p>
+      <p><b>Q:</b> Which systems are highest priority to build first?<br><b>A:</b> Build all equally.</p>
+      <p><b>Q:</b> Should each MVP have the same one-time view gate for client demos?<br><b>A:</b> Yes - one-time view on all.</p>
+      <p><b>First - Send the File Directly on WhatsApp:</b> Open WhatsApp -> paperclip -> Document -> choose the HTML file. Client downloads and opens in browser.</p>
+    </div>
+  </section>
+  <section class="projects">
+    <div class="grid">
+      <div class="card"><h3>School Management System</h3><p>Admissions, fee management, exams, and parent portal.</p><a class="btn" href="./mvp-school-management.html">Open MVP</a></div>
+      <div class="card"><h3>Construction Inventory</h3><p>Material, procurement, suppliers, and site allocation.</p><a class="btn" href="./mvp-construction-inventory.html">Open MVP</a></div>
+      <div class="card"><h3>Workshop Garage System</h3><p>Job cards, stock, cashiering, and daily reporting.</p><a class="btn" href="./mvp-workshop-garage.html">Open MVP</a></div>
+      <div class="card"><h3>Hospital Management</h3><p>Patient records, appointments, pharmacy, and billing.</p><a class="btn" href="./mvp-hospital-management.html">Open MVP</a></div>
+      <div class="card"><h3>HR & Payroll Platform</h3><p>Employees, leave, payroll, and payslip generation.</p><a class="btn" href="./mvp-hr-payroll.html">Open MVP</a></div>
+      <div class="card"><h3>Agri Supply Chain</h3><p>Intake, grading, payouts, and logistics dispatch.</p><a class="btn" href="./mvp-agri-supply-chain.html">Open MVP</a></div>
+    </div>
+  </section>
+  <div class="footer">Essa Core MVP package - share individual files on WhatsApp as Documents.</div>
+</body>
+</html>

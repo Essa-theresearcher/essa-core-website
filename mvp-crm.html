@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Workshop Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0C0C0A;
+  --s1: #131311;
+  --s2: #1A1A17;
+  --s3: #222220;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --accent: #B8F04A;
+  --accent2: #FF6B35;
+  --accent3: #7C6FFF;
+  --text: #F0EDE8;
+  --muted: #888880;
+  --muted2: #444440;
+  --green: #B8F04A;
+  --red: #FF6B35;
+  --blue: #7C6FFF;
+  --yellow: #FFD166;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;height:100vh;display:flex;overflow:hidden;}
+
+/* ONE-TIME VIEW GATE */
+#otv-gate{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:32px;text-align:center;}
+#otv-expired{position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:32px;text-align:center;}
+.otv-ring{width:76px;height:76px;border-radius:50%;border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;animation:otv-pulse 2s ease-in-out infinite;}
+.otv-ring.red{border-color:var(--accent2);animation:none;}
+@keyframes otv-pulse{0%,100%{box-shadow:0 0 0 0 rgba(184,240,74,0.3);}50%{box-shadow:0 0 0 14px rgba(184,240,74,0);}}
+.otv-ring svg{width:32px;height:32px;}
+.otv-h{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;max-width:300px;line-height:1.2;}
+.otv-p{color:var(--muted);font-size:13px;max-width:280px;line-height:1.7;}
+.otv-warn{background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);border-radius:10px;padding:12px 18px;font-size:12px;color:var(--accent2);max-width:290px;line-height:1.6;}
+.otv-btn{background:var(--accent);color:#0C0C0A;border:none;border-radius:100px;padding:13px 34px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:transform 0.15s,opacity 0.15s;}
+.otv-btn:hover{transform:scale(1.03);}
+.otv-btn:active{transform:scale(0.97);}
+.otv-bar{width:260px;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;display:none;}
+.otv-fill{height:100%;width:100%;background:var(--accent);border-radius:2px;transition:width 1.6s linear;}
+.otv-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2);letter-spacing:1px;}
+.otv-timer{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent2);margin-top:-8px;}
+#app-wrap{display:none;width:100%;height:100%;}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-width:220px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;}
+.logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);}
+.logo-text{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--accent);letter-spacing:-0.5px;}
+.logo-sub{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted2);letter-spacing:1px;margin-top:2px;}
+.nav-section{padding:14px 12px 6px;}
+.nav-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted2);padding:0 6px;margin-bottom:6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--muted);transition:all 0.15s;margin-bottom:2px;border:1px solid transparent;}
+.nav-item:hover{background:var(--s2);color:var(--text);}
+.nav-item.active{background:rgba(184,240,74,0.08);color:var(--accent);border-color:rgba(184,240,74,0.15);}
+.nav-icon{width:16px;height:16px;flex-shrink:0;opacity:0.7;}
+.nav-item.active .nav-icon{opacity:1;}
+.sidebar-footer{margin-top:auto;padding:14px 12px;border-top:1px solid var(--border);}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px;background:var(--s2);border-radius:10px;border:1px solid var(--border);}
+.avatar{width:30px;height:30px;border-radius:8px;background:rgba(184,240,74,0.15);border:1px solid rgba(184,240,74,0.25);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--accent);}
+.user-name{font-size:12px;font-weight:500;}
+.user-role{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.topbar-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;transition:all 0.15s;}
+.btn-primary{background:var(--accent);color:#0C0C0A;}
+.btn-primary:hover{opacity:0.9;}
+.btn-ghost{background:var(--s2);color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2);}
+.btn-danger{background:rgba(255,107,53,0.1);color:var(--red);border:1px solid rgba(255,107,53,0.2);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.page{flex:1;overflow-y:auto;padding:24px;}
+.page-section{display:none;}
+.page-section.active{display:block;}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.stat-value{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;margin-bottom:4px;}
+.stat-label{font-size:11px;color:var(--muted);}
+.stat-change{font-size:11px;font-family:'DM Mono',monospace;margin-top:6px;}
+.up{color:var(--green);}
+.down{color:var(--red);}
+
+/* TABLE */
+.table-wrap{background:var(--s1);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;}
+table{width:100%;border-collapse:collapse;}
+thead th{text-align:left;padding:10px 16px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted2);border-bottom:1px solid var(--border);font-weight:400;background:var(--s2);}
+tbody td{padding:11px 16px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(255,255,255,0.015);}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:100px;font-size:10px;font-family:'DM Mono',monospace;font-weight:500;}
+.badge-green{background:rgba(184,240,74,0.1);color:var(--green);border:1px solid rgba(184,240,74,0.2);}
+.badge-orange{background:rgba(255,107,53,0.1);color:var(--red);border:1px solid rgba(255,107,53,0.2);}
+.badge-blue{background:rgba(124,111,255,0.1);color:var(--blue);border:1px solid rgba(124,111,255,0.2);}
+.badge-yellow{background:rgba(255,209,102,0.1);color:var(--yellow);border:1px solid rgba(255,209,102,0.2);}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.5px;}
+.field input,.field select,.field textarea{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color 0.15s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(184,240,74,0.3);}
+.field select option{background:var(--s2);}
+.field textarea{resize:vertical;min-height:70px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:16px;padding:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;}
+.modal-close{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;cursor:pointer;color:var(--muted);font-size:12px;}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+
+/* PL ROW */
+.pl-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.pl-row:last-child{border-bottom:none;}
+.pl-row.total{font-weight:500;font-size:14px;}
+.pl-label{color:var(--muted);}
+.pl-val{font-family:'DM Mono',monospace;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:12px 18px;font-size:13px;z-index:999;transform:translateY(80px);opacity:0;transition:all 0.3s;max-width:280px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(184,240,74,0.3);color:var(--green);}
+.toast.error{border-color:rgba(255,107,53,0.3);color:var(--red);}
+
+/* ITEMS LINE (job card) */
+.line-items{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+.line-item-row{display:grid;grid-template-columns:2fr 1fr 1fr 80px 36px;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);align-items:center;}
+.line-item-row:last-child{border-bottom:none;}
+.line-item-header{background:var(--s2);font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2);letter-spacing:1px;}
+.remove-btn{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;border-radius:4px;}
+.remove-btn:hover{color:var(--red);background:rgba(255,107,53,0.1);}
+
+/* VEHICLE CARDS */
+.vehicle-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.vehicle-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.vehicle-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.vehicle-icon{font-size:22px;}
+.vehicle-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;}
+.vehicle-stat{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);}
+.vehicle-stat:last-child{border-bottom:none;}
+.vehicle-stat-label{color:var(--muted);}
+.vehicle-stat-val{font-family:'DM Mono',monospace;}
+
+/* STOCK BAR */
+.stock-bar{height:4px;background:var(--s3);border-radius:2px;margin-top:6px;overflow:hidden;}
+.stock-fill{height:100%;border-radius:2px;transition:width 0.3s;}
+
+/* SEARCH BAR */
+.search-bar{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.search-bar input{background:none;border:none;outline:none;color:var(--text);font-size:13px;flex:1;font-family:'DM Sans',sans-serif;}
+.search-icon{color:var(--muted);font-size:14px;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{width:60px;min-width:60px;}
+  .logo-text,.logo-sub,.nav-label,.nav-item span,.user-name,.user-role{display:none;}
+  .nav-item{justify-content:center;padding:10px;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .form-grid,.form-grid-3{grid-template-columns:1fr;}
+  .grid-2,.grid-3,.vehicle-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ONE-TIME VIEW GATE -->
+<div id="otv-gate">
+  <div class="otv-ring">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#B8F04A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
+  </div>
+  <div class="otv-h">Private System Demo</div>
+  <p class="otv-p">This Workshop Pro demo has been shared with you privately. It can only be opened once — take screenshots if needed.</p>
+  <div class="otv-warn">⚠️ Once you open this, the link will be permanently locked and cannot be reopened.</div>
+  <div class="otv-bar" id="otv-bar"><div class="otv-fill" id="otv-fill"></div></div>
+  <button class="otv-btn" id="otv-open-btn" onclick="otvOpen()">Open Workshop Pro</button>
+  <div class="otv-meta">WORKSHOP PRO · CONFIDENTIAL DEMO</div>
+</div>
+
+<!-- EXPIRED SCREEN -->
+<div id="otv-expired">
+  <div class="otv-ring red">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF6B35" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+    </svg>
+  </div>
+  <div class="otv-h" style="color:var(--accent2)">Demo Expired</div>
+  <p class="otv-p">This demo link has already been viewed and is no longer available. Contact the sender for a new link.</p>
+  <div class="otv-meta">WORKSHOP PRO · ONE-TIME VIEW</div>
+</div>
+
+<!-- APP WRAPPER -->
+<div id="app-wrap">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-text">Workshop Pro</div>
+    <div class="logo-sub">MANAGEMENT SYSTEM</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Operations</div>
+    <div class="nav-item active" onclick="goto('dashboard')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="goto('service-mgmt')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Service Mgmt</span>
+    </div>
+    <div class="nav-item" onclick="goto('pending-jobs')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Pending Jobs</span>
+    </div>
+    <div class="nav-item" onclick="goto('cashiering')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span>Cashiering</span>
+    </div>
+    <div class="nav-item" onclick="goto('direct-sales')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+      <span>Direct Sales</span>
+    </div>
+    <div class="nav-item" onclick="goto('quotations')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Quotations</span>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Management</div>
+    <div class="nav-item" onclick="goto('stock')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <span>Stock Control</span>
+    </div>
+    <div class="nav-item" onclick="goto('imports')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span>Oil Imports</span>
+    </div>
+    <div class="nav-item" onclick="goto('vehicles')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      <span>Vehicles</span>
+    </div>
+    <div class="nav-item" onclick="goto('customers')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Customers</span>
+    </div>
+    <div class="nav-item" onclick="goto('accounts')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Accounts</span>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Finance</div>
+    <div class="nav-item" onclick="goto('pl')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Profit & Loss</span>
+    </div>
+    <div class="nav-item" onclick="goto('reports')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Reports</span>
+    </div>
+    <div class="nav-item" onclick="goto('search')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Search</span>
+    </div>
+    <div class="nav-item" onclick="goto('settings')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="avatar">JM</div>
+      <div>
+        <div class="user-name">Juma Motors</div>
+        <div class="user-role">OWNER</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost btn-sm" onclick="sendWhatsApp()">📱 Send Report</button>
+      <button class="btn btn-primary btn-sm" onclick="goto('service-mgmt');openModal('job-modal')">+ New Job Card</button>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <!-- ═══════════════════════════════════ DASHBOARD ═══ -->
+    <div class="page-section active" id="sec-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value up">KSh 48,200</div>
+          <div class="stat-label">Today's Revenue</div>
+          <div class="stat-change up">↑ 12% vs yesterday</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--blue)">14</div>
+          <div class="stat-label">Jobs Today</div>
+          <div class="stat-change up">↑ 3 more than avg</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--yellow)">320 L</div>
+          <div class="stat-label">Oil Stock Left</div>
+          <div class="stat-change down">⚠ Reorder soon</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value up">KSh 115K</div>
+          <div class="stat-label">Month Net Profit</div>
+          <div class="stat-change up">↑ Profitable</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Today's Jobs</div>
+          <table>
+            <thead><tr><th>PLATE</th><th>SERVICE</th><th>STAFF</th><th>STATUS</th><th>AMT</th></tr></thead>
+            <tbody id="dashboard-jobs">
+              <tr><td>KDH 234A</td><td>Oil Change 5W-30</td><td>Ali</td><td><span class="badge badge-green">Done</span></td><td style="font-family:'DM Mono',monospace">3,500</td></tr>
+              <tr><td>KBC 001K</td><td>Wheel Alignment</td><td>John</td><td><span class="badge badge-orange">Pending</span></td><td style="font-family:'DM Mono',monospace">2,000</td></tr>
+              <tr><td>KBZ 554J</td><td>Oil Change 10W-40</td><td>Ali</td><td><span class="badge badge-green">Done</span></td><td style="font-family:'DM Mono',monospace">4,200</td></tr>
+              <tr><td>KCG 112B</td><td>Wheel Balancing</td><td>John</td><td><span class="badge badge-blue">Cashier</span></td><td style="font-family:'DM Mono',monospace">1,500</td></tr>
+              <tr><td>KDA 789M</td><td>Oil Change + Filter</td><td>Ali</td><td><span class="badge badge-green">Done</span></td><td style="font-family:'DM Mono',monospace">5,800</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">Revenue Breakdown</div>
+            <div class="pl-row"><span class="pl-label">Oil Sales</span><span class="pl-val up">KSh 28,400</span></div>
+            <div class="pl-row"><span class="pl-label">Workshop Services</span><span class="pl-val up">KSh 12,800</span></div>
+            <div class="pl-row"><span class="pl-label">Direct Sales</span><span class="pl-val up">KSh 7,000</span></div>
+            <div class="pl-row total"><span>Total</span><span class="pl-val up">KSh 48,200</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">⚠ Low Stock Alerts</div>
+            <div class="pl-row"><span class="pl-label">Castrol 10W-40</span><span class="pl-val down">18 L left</span></div>
+            <div class="pl-row"><span class="pl-label">Shell 5W-30</span><span class="pl-val down">24 L left</span></div>
+            <div class="pl-row"><span class="pl-label">Total Quartz 20W-50</span><span class="pl-val" style="color:var(--yellow)">45 L left</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ SERVICE MANAGEMENT ═══ -->
+    <div class="page-section" id="sec-service-mgmt">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div style="font-size:13px;color:var(--muted)">Create and manage job cards for all workshop services</div>
+        <button class="btn btn-primary" onclick="openModal('job-modal')">+ New Job Card</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>JOB #</th><th>DATE</th><th>CAR PLATE</th><th>CUSTOMER</th><th>SERVICES</th><th>AMOUNT</th><th>PAYMENT</th><th>STATUS</th><th>ACTION</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#JC-0041</td><td>03 May 2026</td><td>KDH 234A</td><td>Hassan Osman</td><td>Oil Change 5W-30</td><td style="font-family:'DM Mono',monospace">3,500</td><td>M-Pesa</td><td><span class="badge badge-green">Cleared</span></td><td><button class="btn btn-ghost btn-sm" onclick="showReceipt()">🖨 Receipt</button></td></tr>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#JC-0040</td><td>03 May 2026</td><td>KBC 001K</td><td>Amina Wanjiru</td><td>Wheel Alignment</td><td style="font-family:'DM Mono',monospace">2,000</td><td>Cash</td><td><span class="badge badge-orange">Pending</span></td><td><button class="btn btn-ghost btn-sm" onclick="openModal('job-modal')">✏ Edit</button></td></tr>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#JC-0039</td><td>02 May 2026</td><td>KBZ 554J</td><td>Peter Kamau</td><td>Oil 10W-40 + Filter</td><td style="font-family:'DM Mono',monospace">5,800</td><td>Cash</td><td><span class="badge badge-green">Cleared</span></td><td><button class="btn btn-ghost btn-sm" onclick="showReceipt()">🖨 Receipt</button></td></tr>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#JC-0038</td><td>02 May 2026</td><td>KCG 112B</td><td>James Otieno</td><td>Wheel Balancing x4</td><td style="font-family:'DM Mono',monospace">1,500</td><td>M-Pesa</td><td><span class="badge badge-blue">At Cashier</span></td><td><button class="btn btn-ghost btn-sm" onclick="goto('cashiering')">💳 Collect</button></td></tr>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#JC-0037</td><td>01 May 2026</td><td>KDA 789M</td><td>Grace Njoki</td><td>Oil Change + Alignment</td><td style="font-family:'DM Mono',monospace">7,200</td><td>Cash</td><td><span class="badge badge-green">Cleared</span></td><td><button class="btn btn-danger btn-sm" onclick="revertJob()">↩ Revert</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ PENDING JOBS ═══ -->
+    <div class="page-section" id="sec-pending-jobs">
+      <div style="margin-bottom:16px;font-size:13px;color:var(--muted)">Jobs in progress — update status or add services</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>JOB #</th><th>PLATE</th><th>CUSTOMER</th><th>SERVICE</th><th>STARTED</th><th>STAFF</th><th>NOTES</th><th>ACTION</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#JC-0040</td><td>KBC 001K</td><td>Amina Wanjiru</td><td>Wheel Alignment</td><td>09:30 AM</td><td>John</td><td>Front wheels only</td><td><button class="btn btn-primary btn-sm" onclick="completeJob()">✓ Complete</button></td></tr>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#JC-0042</td><td>KAD 556P</td><td>David Mwangi</td><td>Oil 5W-30 + Flush</td><td>10:15 AM</td><td>Ali</td><td>Check brake fluid too</td><td><button class="btn btn-primary btn-sm" onclick="completeJob()">✓ Complete</button></td></tr>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#JC-0043</td><td>KCC 889Q</td><td>Sarah Achieng</td><td>Balancing x4</td><td>11:00 AM</td><td>John</td><td>—</td><td><button class="btn btn-primary btn-sm" onclick="completeJob()">✓ Complete</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ CASHIERING ═══ -->
+    <div class="page-section" id="sec-cashiering">
+      <div style="margin-bottom:16px;font-size:13px;color:var(--muted)">Collect payment for completed jobs</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>JOB #</th><th>PLATE</th><th>CUSTOMER</th><th>SERVICES</th><th>AMOUNT</th><th>PAYMENT</th><th>ACTION</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-family:'DM Mono',monospace;color:var(--accent)">#JC-0038</td><td>KCG 112B</td><td>James Otieno</td><td>Wheel Balancing x4</td>
+              <td style="font-family:'DM Mono',monospace">KSh 1,500</td>
+              <td>
+                <select style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;font-size:12px;">
+                  <option>Cash</option><option>M-Pesa</option><option>Credit</option>
+                </select>
+              </td>
+              <td><button class="btn btn-primary btn-sm" onclick="collectPayment()">💳 Collect & Print</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="max-width:400px">
+        <div class="card-title">M-Pesa STK Push</div>
+        <div class="field" style="margin-bottom:12px">
+          <label>Customer Phone</label>
+          <input type="tel" placeholder="0712 345 678" value="0712 345 678">
+        </div>
+        <div class="field" style="margin-bottom:12px">
+          <label>Amount (KSh)</label>
+          <input type="number" value="1500">
+        </div>
+        <button class="btn btn-primary" onclick="sendSTK()">Send M-Pesa Request 📲</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ DIRECT SALES ═══ -->
+    <div class="page-section" id="sec-direct-sales">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:13px;color:var(--muted)">Sell oil or products without creating a full job card</div>
+        <button class="btn btn-primary" onclick="openModal('sale-modal')">+ New Sale</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>SALE #</th><th>DATE</th><th>ITEM</th><th>QTY</th><th>UNIT PRICE</th><th>TOTAL</th><th>CUSTOMER</th><th>PAYMENT</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#DS-012</td><td>03 May</td><td>Castrol 10W-40 4L</td><td>2</td><td style="font-family:'DM Mono',monospace">2,800</td><td style="font-family:'DM Mono',monospace">5,600</td><td>Walk-in</td><td><span class="badge badge-green">M-Pesa</span></td></tr>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#DS-011</td><td>03 May</td><td>Shell Helix 5W-30 5L</td><td>1</td><td style="font-family:'DM Mono',monospace">3,200</td><td style="font-family:'DM Mono',monospace">3,200</td><td>David Mwangi</td><td><span class="badge badge-blue">Cash</span></td></tr>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#DS-010</td><td>02 May</td><td>Total Quartz 20W-50 4L</td><td>3</td><td style="font-family:'DM Mono',monospace">1,800</td><td style="font-family:'DM Mono',monospace">5,400</td><td>Grace Njoki</td><td><span class="badge badge-green">M-Pesa</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ QUOTATIONS ═══ -->
+    <div class="page-section" id="sec-quotations">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:13px;color:var(--muted)">Create price estimates before work begins</div>
+        <button class="btn btn-primary" onclick="openModal('quote-modal')">+ New Quotation</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>QUOTE #</th><th>DATE</th><th>CUSTOMER</th><th>PLATE</th><th>SERVICES</th><th>AMOUNT</th><th>STATUS</th><th>ACTION</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#Q-008</td><td>03 May</td><td>Hassan Osman</td><td>KDH 234A</td><td>Full service package</td><td style="font-family:'DM Mono',monospace">12,500</td><td><span class="badge badge-yellow">Sent</span></td><td><button class="btn btn-primary btn-sm" onclick="convertQuote()">→ Convert to Job</button></td></tr>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#Q-007</td><td>02 May</td><td>Amina Wanjiru</td><td>KBC 001K</td><td>Alignment + Balancing</td><td style="font-family:'DM Mono',monospace">4,500</td><td><span class="badge badge-green">Accepted</span></td><td><button class="btn btn-primary btn-sm" onclick="convertQuote()">→ Convert to Job</button></td></tr>
+            <tr><td style="font-family:'DM Mono',monospace;color:var(--accent)">#Q-006</td><td>01 May</td><td>James Otieno</td><td>KCG 112B</td><td>Oil change + filter</td><td style="font-family:'DM Mono',monospace">5,200</td><td><span class="badge badge-orange">Declined</span></td><td><button class="btn btn-ghost btn-sm">Archive</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ STOCK CONTROL ═══ -->
+    <div class="page-section" id="sec-stock">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:13px;color:var(--muted)">Live inventory — auto-deducted on each job</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost" onclick="openModal('receive-modal')">+ Receive Stock</button>
+          <button class="btn btn-primary" onclick="openModal('stock-modal')">+ Add Product</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>PRODUCT</th><th>CATEGORY</th><th>QTY ON HAND</th><th>REORDER LEVEL</th><th>COST/L</th><th>SELL/L</th><th>MARGIN</th><th>STATUS</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Castrol 10W-40</td><td>Engine Oil</td>
+              <td><div style="font-family:'DM Mono',monospace">18 L</div><div class="stock-bar"><div class="stock-fill" style="width:18%;background:var(--red)"></div></div></td>
+              <td style="font-family:'DM Mono',monospace">30 L</td>
+              <td style="font-family:'DM Mono',monospace">380</td><td style="font-family:'DM Mono',monospace">650</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--green)">+42%</td>
+              <td><span class="badge badge-orange">Low Stock</span></td>
+            </tr>
+            <tr>
+              <td>Shell Helix 5W-30</td><td>Engine Oil</td>
+              <td><div style="font-family:'DM Mono',monospace">24 L</div><div class="stock-bar"><div class="stock-fill" style="width:24%;background:var(--red)"></div></div></td>
+              <td style="font-family:'DM Mono',monospace">30 L</td>
+              <td style="font-family:'DM Mono',monospace">420</td><td style="font-family:'DM Mono',monospace">700</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--green)">+40%</td>
+              <td><span class="badge badge-orange">Low Stock</span></td>
+            </tr>
+            <tr>
+              <td>Total Quartz 20W-50</td><td>Engine Oil</td>
+              <td><div style="font-family:'DM Mono',monospace">120 L</div><div class="stock-bar"><div class="stock-fill" style="width:60%;background:var(--green)"></div></div></td>
+              <td style="font-family:'DM Mono',monospace">40 L</td>
+              <td style="font-family:'DM Mono',monospace">320</td><td style="font-family:'DM Mono',monospace">550</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--green)">+41%</td>
+              <td><span class="badge badge-green">OK</span></td>
+            </tr>
+            <tr>
+              <td>Mobil Super 10W-40</td><td>Engine Oil</td>
+              <td><div style="font-family:'DM Mono',monospace">85 L</div><div class="stock-bar"><div class="stock-fill" style="width:70%;background:var(--green)"></div></div></td>
+              <td style="font-family:'DM Mono',monospace">30 L</td>
+              <td style="font-family:'DM Mono',monospace">360</td><td style="font-family:'DM Mono',monospace">620</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--green)">+42%</td>
+              <td><span class="badge badge-green">OK</span></td>
+            </tr>
+            <tr>
+              <td>Gear Oil 80W-90</td><td>Gear Oil</td>
+              <td><div style="font-family:'DM Mono',monospace">40 L</div><div class="stock-bar"><div class="stock-fill" style="width:50%;background:var(--yellow)"></div></div></td>
+              <td style="font-family:'DM Mono',monospace">20 L</td>
+              <td style="font-family:'DM Mono',monospace">280</td><td style="font-family:'DM Mono',monospace">480</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--green)">+41%</td>
+              <td><span class="badge badge-blue">Normal</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ OIL IMPORTS ═══ -->
+    <div class="page-section" id="sec-imports">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:13px;color:var(--muted)">Track every import shipment with full landed cost</div>
+        <button class="btn btn-primary" onclick="openModal('import-modal')">+ New Shipment</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>SHIPMENT #</th><th>SUPPLIER</th><th>QTY</th><th>INVOICE USD</th><th>FREIGHT</th><th>DUTY+CLEARING</th><th>LANDED KSH/L</th><th>STATUS</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-family:'DM Mono',monospace;color:var(--accent)">#IMP-007</td><td>Dubai Lubricants LLC</td>
+              <td style="font-family:'DM Mono',monospace">500 L</td>
+              <td style="font-family:'DM Mono',monospace">$820</td>
+              <td style="font-family:'DM Mono',monospace">KSh 14,200</td>
+              <td style="font-family:'DM Mono',monospace">KSh 38,400</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--accent)">KSh 372/L</td>
+              <td><span class="badge badge-green">Received</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:'DM Mono',monospace;color:var(--accent)">#IMP-006</td><td>Gulf Oil Trading</td>
+              <td style="font-family:'DM Mono',monospace">300 L</td>
+              <td style="font-family:'DM Mono',monospace">$510</td>
+              <td style="font-family:'DM Mono',monospace">KSh 9,800</td>
+              <td style="font-family:'DM Mono',monospace">KSh 24,100</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--accent)">KSh 384/L</td>
+              <td><span class="badge badge-yellow">In Transit</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:'DM Mono',monospace;color:var(--accent)">#IMP-005</td><td>Dubai Lubricants LLC</td>
+              <td style="font-family:'DM Mono',monospace">800 L</td>
+              <td style="font-family:'DM Mono',monospace">$1,280</td>
+              <td style="font-family:'DM Mono',monospace">KSh 22,000</td>
+              <td style="font-family:'DM Mono',monospace">KSh 58,000</td>
+              <td style="font-family:'DM Mono',monospace;color:var(--accent)">KSh 368/L</td>
+              <td><span class="badge badge-green">Received</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="max-width:500px">
+        <div class="card-title">Average Landed Cost (Last 3 Shipments)</div>
+        <div class="pl-row"><span class="pl-label">Avg cost per litre</span><span class="pl-val" style="color:var(--yellow)">KSh 374/L</span></div>
+        <div class="pl-row"><span class="pl-label">Avg sell price</span><span class="pl-val up">KSh 625/L</span></div>
+        <div class="pl-row"><span class="pl-label">Avg gross margin</span><span class="pl-val up">+67%</span></div>
+        <div class="pl-row"><span class="pl-label">Exchange rate used</span><span class="pl-val">USD 1 = KSh 130</span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ VEHICLES ═══ -->
+    <div class="page-section" id="sec-vehicles">
+      <div style="margin-bottom:16px;font-size:13px;color:var(--muted)">Track expenses and profitability per vehicle</div>
+      <div class="vehicle-grid">
+        <div class="vehicle-card">
+          <div class="vehicle-header">
+            <div class="vehicle-icon">🚐</div>
+            <div><div class="vehicle-name">Van — KBE 445T</div><div style="font-size:11px;color:var(--muted)">Delivery + Workshop runs</div></div>
+          </div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Fuel this month</span><span class="vehicle-stat-val down">KSh 18,400</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Driver salary</span><span class="vehicle-stat-val down">KSh 22,000</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Insurance</span><span class="vehicle-stat-val down">KSh 4,200</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Maintenance</span><span class="vehicle-stat-val down">KSh 3,600</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Total cost</span><span class="vehicle-stat-val down">KSh 48,200</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Revenue generated</span><span class="vehicle-stat-val up">KSh 112,000</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label" style="font-weight:500;color:var(--text)">Net contribution</span><span class="vehicle-stat-val up" style="font-size:14px">KSh 63,800 ✓</span></div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:12px;width:100%" onclick="openModal('trip-modal')">+ Log Trip</button>
+        </div>
+        <div class="vehicle-card">
+          <div class="vehicle-header">
+            <div class="vehicle-icon">🚛</div>
+            <div><div class="vehicle-name">Truck — KCF 112M</div><div style="font-size:11px;color:var(--muted)">Oil import deliveries</div></div>
+          </div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Fuel this month</span><span class="vehicle-stat-val down">KSh 34,000</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Driver salary</span><span class="vehicle-stat-val down">KSh 28,000</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Insurance</span><span class="vehicle-stat-val down">KSh 7,800</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Maintenance</span><span class="vehicle-stat-val down">KSh 12,400</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Total cost</span><span class="vehicle-stat-val down">KSh 82,200</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label">Revenue generated</span><span class="vehicle-stat-val up">KSh 74,000</span></div>
+          <div class="vehicle-stat"><span class="vehicle-stat-label" style="font-weight:500;color:var(--text)">Net contribution</span><span class="vehicle-stat-val down" style="font-size:14px">− KSh 8,200 ⚠</span></div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:12px;width:100%" onclick="openModal('trip-modal')">+ Log Trip</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Trip Log</div>
+        <table>
+          <thead><tr><th>DATE</th><th>VEHICLE</th><th>ROUTE</th><th>FUEL COST</th><th>OIL DELIVERED</th><th>REVENUE</th><th>PROFIT</th></tr></thead>
+          <tbody>
+            <tr><td>03 May</td><td>🚐 Van</td><td>Nairobi CBD → Industrial</td><td style="font-family:'DM Mono',monospace">1,200</td><td style="font-family:'DM Mono',monospace">80 L</td><td style="font-family:'DM Mono',monospace">52,000</td><td style="font-family:'DM Mono',monospace;color:var(--green)">+50,800</td></tr>
+            <tr><td>02 May</td><td>🚛 Truck</td><td>Mombasa Port → Nairobi</td><td style="font-family:'DM Mono',monospace">8,400</td><td style="font-family:'DM Mono',monospace">500 L</td><td style="font-family:'DM Mono',monospace">18,600</td><td style="font-family:'DM Mono',monospace;color:var(--green)">+10,200</td></tr>
+            <tr><td>01 May</td><td>🚐 Van</td><td>Westlands → Karen</td><td style="font-family:'DM Mono',monospace">800</td><td style="font-family:'DM Mono',monospace">40 L</td><td style="font-family:'DM Mono',monospace">26,000</td><td style="font-family:'DM Mono',monospace;color:var(--green)">+25,200</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ CUSTOMERS ═══ -->
+    <div class="page-section" id="sec-customers">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:13px;color:var(--muted)">Customer records with oil change reminders</div>
+        <button class="btn btn-primary" onclick="openModal('customer-modal')">+ Add Customer</button>
+      </div>
+      <div class="search-bar"><span class="search-icon">🔍</span><input type="text" placeholder="Search by name, plate, or phone..."></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>NAME</th><th>PHONE</th><th>CAR PLATE</th><th>CAR MAKE</th><th>LAST SERVICE</th><th>NEXT REMINDER</th><th>TOTAL SPENT</th><th>ACTION</th></tr></thead>
+          <tbody>
+            <tr><td>Hassan Osman</td><td>0712 345 678</td><td>KDH 234A</td><td>Toyota Corolla</td><td>03 May 2026</td><td style="color:var(--yellow)">03 Aug 2026</td><td style="font-family:'DM Mono',monospace">KSh 42,800</td><td><button class="btn btn-ghost btn-sm">View Jobs</button></td></tr>
+            <tr><td>Amina Wanjiru</td><td>0722 111 222</td><td>KBC 001K</td><td>Nissan Tiida</td><td>28 Apr 2026</td><td style="color:var(--green)">28 Jul 2026</td><td style="font-family:'DM Mono',monospace">KSh 18,500</td><td><button class="btn btn-ghost btn-sm">View Jobs</button></td></tr>
+            <tr><td>Peter Kamau</td><td>0733 999 888</td><td>KBZ 554J</td><td>Subaru Forester</td><td>02 May 2026</td><td style="color:var(--yellow)">02 Aug 2026</td><td style="font-family:'DM Mono',monospace">KSh 31,200</td><td><button class="btn btn-ghost btn-sm">View Jobs</button></td></tr>
+            <tr><td>Grace Njoki</td><td>0701 444 555</td><td>KDA 789M</td><td>Honda CRV</td><td>15 Feb 2026</td><td style="color:var(--red)">15 May 2026 ⚠</td><td style="font-family:'DM Mono',monospace">KSh 67,400</td><td><button class="btn btn-primary btn-sm" onclick="sendReminder()">📱 Send Reminder</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ ACCOUNTS ═══ -->
+    <div class="page-section" id="sec-accounts">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:13px;color:var(--muted)">Manage system users, roles and permissions</div>
+        <button class="btn btn-primary" onclick="openModal('user-modal')">+ Add User</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>NAME</th><th>ROLE</th><th>PHONE</th><th>ACCESS LEVEL</th><th>LAST LOGIN</th><th>STATUS</th><th>ACTION</th></tr></thead>
+          <tbody>
+            <tr><td>Juma Mohamed</td><td>Owner</td><td>0700 123 456</td><td>Full access</td><td>Today 08:12</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td>Ali Hassan</td><td>Technician</td><td>0711 222 333</td><td>Job cards, stock</td><td>Today 08:45</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td>John Kamau</td><td>Technician</td><td>0722 444 555</td><td>Job cards only</td><td>Today 09:00</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td>Mary Wanjiku</td><td>Cashier</td><td>0733 666 777</td><td>Cashiering, receipts</td><td>Today 08:30</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ PROFIT & LOSS ═══ -->
+    <div class="page-section" id="sec-pl">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+        <select style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-size:13px;">
+          <option>May 2026</option><option>April 2026</option><option>March 2026</option>
+        </select>
+        <button class="btn btn-ghost">📊 Export PDF</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendWhatsApp()">📱 Send to WhatsApp</button>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <div class="card-title" style="color:var(--green)">Revenue</div>
+            <div class="pl-row"><span class="pl-label">Oil sales (imported)</span><span class="pl-val up">KSh 420,000</span></div>
+            <div class="pl-row"><span class="pl-label">Oil change services</span><span class="pl-val up">KSh 98,000</span></div>
+            <div class="pl-row"><span class="pl-label">Wheel alignment</span><span class="pl-val up">KSh 48,000</span></div>
+            <div class="pl-row"><span class="pl-label">Wheel balancing</span><span class="pl-val up">KSh 22,000</span></div>
+            <div class="pl-row"><span class="pl-label">Direct sales</span><span class="pl-val up">KSh 12,000</span></div>
+            <div class="pl-row total"><span>Total Revenue</span><span class="pl-val up">KSh 600,000</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--red)">Cost of Goods</div>
+            <div class="pl-row"><span class="pl-label">Oil landed cost (duty, freight, clearing)</span><span class="pl-val down">− KSh 280,000</span></div>
+            <div class="pl-row"><span class="pl-label">Workshop consumables</span><span class="pl-val down">− KSh 18,000</span></div>
+            <div class="pl-row total"><span>Gross Profit</span><span class="pl-val up">KSh 302,000</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title" style="color:var(--red)">Operating Expenses</div>
+            <div class="pl-row"><span class="pl-label">Van (fuel, driver, insurance, service)</span><span class="pl-val down">− KSh 48,200</span></div>
+            <div class="pl-row"><span class="pl-label">Truck (fuel, driver, insurance, service)</span><span class="pl-val down">− KSh 82,200</span></div>
+            <div class="pl-row"><span class="pl-label">Staff salaries</span><span class="pl-val down">− KSh 38,000</span></div>
+            <div class="pl-row"><span class="pl-label">Rent & utilities</span><span class="pl-val down">− KSh 14,000</span></div>
+            <div class="pl-row"><span class="pl-label">Phone, internet, misc</span><span class="pl-val down">− KSh 4,600</span></div>
+            <div class="pl-row total"><span>Total Expenses</span><span class="pl-val down">− KSh 187,000</span></div>
+          </div>
+          <div class="card" style="border-color:rgba(184,240,74,0.2)">
+            <div class="card-title">Net Result</div>
+            <div class="pl-row"><span class="pl-label">Gross Profit</span><span class="pl-val up">KSh 302,000</span></div>
+            <div class="pl-row"><span class="pl-label">Total Expenses</span><span class="pl-val down">− KSh 187,000</span></div>
+            <div class="pl-row total" style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px">
+              <span style="color:var(--text)">NET PROFIT</span>
+              <span class="pl-val" style="color:var(--green);font-size:20px;font-family:'DM Mono',monospace">KSh 115,000</span>
+            </div>
+            <div style="margin-top:12px;padding:10px;background:rgba(184,240,74,0.05);border-radius:8px;font-size:12px;color:var(--muted)">
+              ✅ Profitable month. Truck is running at a loss — review delivery pricing.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ REPORTS ═══ -->
+    <div class="page-section" id="sec-reports">
+      <div style="margin-bottom:20px;font-size:13px;color:var(--muted)">Generate and export business reports</div>
+      <div class="grid-3" style="margin-bottom:20px">
+        <div class="card" style="cursor:pointer;text-align:center" onclick="toast('Generating daily report...','success')">
+          <div style="font-size:28px;margin-bottom:10px">📋</div>
+          <div style="font-weight:500;margin-bottom:4px">Daily Report</div>
+          <div style="font-size:12px;color:var(--muted)">Today's jobs, revenue, stock</div>
+        </div>
+        <div class="card" style="cursor:pointer;text-align:center" onclick="toast('Generating stock report...','success')">
+          <div style="font-size:28px;margin-bottom:10px">📦</div>
+          <div style="font-weight:500;margin-bottom:4px">Stock Report</div>
+          <div style="font-size:12px;color:var(--muted)">Inventory movement & levels</div>
+        </div>
+        <div class="card" style="cursor:pointer;text-align:center" onclick="toast('Generating P&L report...','success')">
+          <div style="font-size:28px;margin-bottom:10px">💰</div>
+          <div style="font-weight:500;margin-bottom:4px">P&L Report</div>
+          <div style="font-size:12px;color:var(--muted)">Monthly profit and loss</div>
+        </div>
+        <div class="card" style="cursor:pointer;text-align:center" onclick="toast('Generating vehicle report...','success')">
+          <div style="font-size:28px;margin-bottom:10px">🚐</div>
+          <div style="font-weight:500;margin-bottom:4px">Vehicle Report</div>
+          <div style="font-size:12px;color:var(--muted)">Van & truck P&L per trip</div>
+        </div>
+        <div class="card" style="cursor:pointer;text-align:center" onclick="toast('Generating import report...','success')">
+          <div style="font-size:28px;margin-bottom:10px">🛢</div>
+          <div style="font-weight:500;margin-bottom:4px">Import Report</div>
+          <div style="font-size:12px;color:var(--muted)">Landed cost & margins</div>
+        </div>
+        <div class="card" style="cursor:pointer;text-align:center" onclick="toast('Generating customer report...','success')">
+          <div style="font-size:28px;margin-bottom:10px">👥</div>
+          <div style="font-weight:500;margin-bottom:4px">Customer Report</div>
+          <div style="font-size:12px;color:var(--muted)">Top customers & reminders due</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Automated Daily WhatsApp Report Preview</div>
+        <div style="background:var(--s2);border-radius:10px;padding:16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.9;color:var(--text)">
+          🔧 *Workshop Pro Daily Report*<br>
+          📅 Date: 03 May 2026<br>
+          ─────────────────────<br>
+          📋 Jobs completed: *14*<br>
+          💰 Total revenue: *KSh 48,200*<br>
+          🛢 Oil services: *KSh 28,400*<br>
+          🔩 Alignment/Balance: *KSh 12,800*<br>
+          🏪 Direct sales: *KSh 7,000*<br>
+          ─────────────────────<br>
+          📦 Stock alert: Castrol 10W-40 low (18L)<br>
+          📦 Stock alert: Shell 5W-30 low (24L)<br>
+          ─────────────────────<br>
+          ✅ Good day. Above average revenue.
+        </div>
+        <button class="btn btn-primary" style="margin-top:14px" onclick="sendWhatsApp()">📱 Send Now to Owner</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ SEARCH ═══ -->
+    <div class="page-section" id="sec-search">
+      <div class="search-bar" style="margin-bottom:20px">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search job cards, plates, customers, receipts..." id="main-search" oninput="doSearch(this.value)">
+      </div>
+      <div id="search-results">
+        <div style="text-align:center;color:var(--muted);padding:40px;font-size:13px">Type to search across all records</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ SETTINGS ═══ -->
+    <div class="page-section" id="sec-settings">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Business Settings</div>
+          <div class="field"><label>Business Name</label><input value="Juma Motors Workshop"></div>
+          <div class="field" style="margin-top:12px"><label>M-Pesa Paybill / Till</label><input value="247247"></div>
+          <div class="field" style="margin-top:12px"><label>Owner WhatsApp</label><input value="+254 700 123 456"></div>
+          <div class="field" style="margin-top:12px"><label>Daily Report Time</label><input type="time" value="18:00"></div>
+          <button class="btn btn-primary" style="margin-top:16px" onclick="toast('Settings saved!','success')">Save Changes</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Service Settings</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>SERVICE</th><th>CATEGORY</th><th>DEFAULT PRICE</th></tr></thead>
+              <tbody>
+                <tr><td>Oil Change 5W-30</td><td>Oil</td><td style="font-family:'DM Mono',monospace">3,500</td></tr>
+                <tr><td>Oil Change 10W-40</td><td>Oil</td><td style="font-family:'DM Mono',monospace">4,200</td></tr>
+                <tr><td>Oil Change 20W-50</td><td>Oil</td><td style="font-family:'DM Mono',monospace">2,800</td></tr>
+                <tr><td>Wheel Alignment</td><td>Alignment</td><td style="font-family:'DM Mono',monospace">2,000</td></tr>
+                <tr><td>Wheel Balancing x4</td><td>Balancing</td><td style="font-family:'DM Mono',monospace">1,500</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:12px" onclick="openModal('service-settings-modal')">+ Add Service</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Store Management</div>
+          <div class="field"><label>Store Name</label><input value="Main Workshop - Nairobi"></div>
+          <div class="field" style="margin-top:12px"><label>Address</label><input value="Industrial Area, Nairobi"></div>
+          <div class="field" style="margin-top:12px"><label>Currency</label><select><option>KSh — Kenyan Shilling</option></select></div>
+          <div class="field" style="margin-top:12px"><label>Tax Rate (%)</label><input type="number" value="16"></div>
+          <button class="btn btn-primary" style="margin-top:16px" onclick="toast('Store settings saved!','success')">Save</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Subscription</div>
+          <div class="pl-row"><span class="pl-label">Current plan</span><span style="color:var(--accent);font-weight:500">Standard</span></div>
+          <div class="pl-row"><span class="pl-label">Price</span><span class="pl-val">KSh 3,500/mo</span></div>
+          <div class="pl-row"><span class="pl-label">Next billing</span><span class="pl-val">01 June 2026</span></div>
+          <div class="pl-row"><span class="pl-label">Status</span><span class="badge badge-green">Active</span></div>
+          <button class="btn btn-ghost" style="margin-top:14px">Upgrade to Pro</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page -->
+</div><!-- /main -->
+
+<!-- ═══════════════════════════════════ MODALS ═══ -->
+
+<!-- JOB CARD MODAL -->
+<div class="modal-overlay" id="job-modal">
+  <div class="modal">
+    <div class="modal-title">New Job Card <button class="modal-close" onclick="closeModal('job-modal')">✕ Close</button></div>
+    <div class="form-grid">
+      <div class="field"><label>Car Plate</label><input placeholder="e.g. KDA 123A" id="jc-plate"></div>
+      <div class="field"><label>Customer Name</label><input placeholder="Customer name"></div>
+      <div class="field"><label>Car Make / Model</label><input placeholder="e.g. Toyota Corolla"></div>
+      <div class="field"><label>Customer Phone</label><input placeholder="0700 000 000"></div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:8px">SERVICES</div>
+    <div class="line-items" id="line-items">
+      <div class="line-item-row line-item-header">
+        <span>SERVICE</span><span>QTY/LITRES</span><span>UNIT PRICE</span><span>TOTAL</span><span></span>
+      </div>
+      <div class="line-item-row">
+        <select style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-size:12px;width:100%">
+          <option>Oil Change 5W-30</option><option>Oil Change 10W-40</option><option>Oil Change 20W-50</option><option>Wheel Alignment</option><option>Wheel Balancing x4</option><option>Oil + Filter</option>
+        </select>
+        <input type="number" value="4" style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-size:12px;width:100%">
+        <input type="number" value="3500" style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-size:12px;width:100%">
+        <span style="font-family:'DM Mono',monospace;font-size:12px;padding:6px">14,000</span>
+        <button class="remove-btn">×</button>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm" style="margin-bottom:16px" onclick="addLineItem()">+ Add Service</button>
+    <div class="form-grid">
+      <div class="field"><label>Staff Member</label>
+        <select><option>Ali Hassan</option><option>John Kamau</option><option>Mary Wanjiku</option></select>
+      </div>
+      <div class="field"><label>Payment Method</label>
+        <select><option>Cash</option><option>M-Pesa</option><option>Credit</option></select>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:16px"><label>Notes</label><textarea placeholder="Any additional notes..."></textarea></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('job-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveJobCard()">Save Job Card</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal">
+    <div class="modal-title">New Import Shipment <button class="modal-close" onclick="closeModal('import-modal')">✕ Close</button></div>
+    <div class="form-grid">
+      <div class="field"><label>Supplier Name</label><input placeholder="e.g. Dubai Lubricants LLC"></div>
+      <div class="field"><label>Supplier Country</label><input placeholder="e.g. UAE"></div>
+      <div class="field"><label>Invoice Number</label><input placeholder="INV-2026-001"></div>
+      <div class="field"><label>Quantity Ordered (Litres)</label><input type="number" placeholder="500"></div>
+      <div class="field"><label>Invoice Amount (USD)</label><input type="number" placeholder="820"></div>
+      <div class="field"><label>USD Exchange Rate</label><input type="number" placeholder="130" value="130"></div>
+      <div class="field"><label>Freight Cost (KSh)</label><input type="number" placeholder="14200"></div>
+      <div class="field"><label>Port Charges (KSh)</label><input type="number" placeholder="8000"></div>
+      <div class="field"><label>Customs Duty (KSh)</label><input type="number" placeholder="22000"></div>
+      <div class="field"><label>Clearing Agent (KSh)</label><input type="number" placeholder="8400"></div>
+    </div>
+    <div class="field" style="margin-bottom:16px"><label>Expected Arrival Date</label><input type="date"></div>
+    <div style="background:var(--s2);border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px">
+      <div style="color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px">LANDED COST CALCULATOR</div>
+      <div class="pl-row"><span class="pl-label">Invoice (USD→KSh)</span><span class="pl-val">KSh 106,600</span></div>
+      <div class="pl-row"><span class="pl-label">+ All other costs</span><span class="pl-val">KSh 52,400</span></div>
+      <div class="pl-row"><span class="pl-label">Total landed cost</span><span class="pl-val up">KSh 159,000</span></div>
+      <div class="pl-row"><span class="pl-label">Cost per litre</span><span class="pl-val" style="color:var(--yellow)">KSh 318/L</span></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('import-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="toast('Shipment saved!','success');closeModal('import-modal')">Save Shipment</button>
+    </div>
+  </div>
+</div>
+
+<!-- SALE MODAL -->
+<div class="modal-overlay" id="sale-modal">
+  <div class="modal">
+    <div class="modal-title">New Direct Sale <button class="modal-close" onclick="closeModal('sale-modal')">✕ Close</button></div>
+    <div class="form-grid">
+      <div class="field"><label>Product</label>
+        <select><option>Castrol 10W-40 4L</option><option>Shell Helix 5W-30 5L</option><option>Total Quartz 20W-50 4L</option><option>Mobil Super 10W-40</option></select>
+      </div>
+      <div class="field"><label>Quantity</label><input type="number" value="1"></div>
+      <div class="field"><label>Unit Price (KSh)</label><input type="number" value="2800"></div>
+      <div class="field"><label>Customer Name</label><input placeholder="Walk-in or name"></div>
+      <div class="field"><label>Phone (optional)</label><input placeholder="0700 000 000"></div>
+      <div class="field"><label>Payment</label><select><option>Cash</option><option>M-Pesa</option></select></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal('sale-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="toast('Sale recorded!','success');closeModal('sale-modal')">Record Sale</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRIP MODAL -->
+<div class="modal-overlay" id="trip-modal">
+  <div class="modal">
+    <div class="modal-title">Log Vehicle Trip <button class="modal-close" onclick="closeModal('trip-modal')">✕ Close</button></div>
+    <div class="form-grid">
+      <div class="field"><label>Vehicle</label><select><option>🚐 Van — KBE 445T</option><option>🚛 Truck — KCF 112M</option></select></div>
+      <div class="field"><label>Date</label><input type="date"></div>
+      <div class="field"><label>Route / Destination</label><input placeholder="e.g. Nairobi → Mombasa"></div>
+      <div class="field"><label>Driver</label><input placeholder="Driver name"></div>
+      <div class="field"><label>Fuel Cost (KSh)</label><input type="number" placeholder="0"></div>
+      <div class="field"><label>Oil Delivered (Litres)</label><input type="number" placeholder="0"></div>
+      <div class="field"><label>Revenue from Trip (KSh)</label><input type="number" placeholder="0"></div>
+      <div class="field"><label>Other Costs (KSh)</label><input type="number" placeholder="0"></div>
+    </div>
+    <div class="field" style="margin-bottom:16px"><label>Notes</label><textarea placeholder="Any trip notes..."></textarea></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('trip-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="toast('Trip logged!','success');closeModal('trip-modal')">Save Trip</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECEIPT MODAL -->
+<div class="modal-overlay" id="receipt-modal">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-title">Receipt <button class="modal-close" onclick="closeModal('receipt-modal')">✕ Close</button></div>
+    <div style="text-align:center;padding:10px 0 20px;border-bottom:1px dashed var(--border)">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--accent)">Workshop Pro</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">Juma Motors · Industrial Area, Nairobi</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">Receipt #JC-0041 · 03 May 2026, 10:24 AM</div>
+    </div>
+    <div style="padding:16px 0;border-bottom:1px dashed var(--border)">
+      <div class="pl-row"><span class="pl-label">Customer</span><span>Hassan Osman</span></div>
+      <div class="pl-row"><span class="pl-label">Car Plate</span><span style="font-family:'DM Mono',monospace">KDH 234A</span></div>
+      <div class="pl-row"><span class="pl-label">Car Make</span><span>Toyota Corolla</span></div>
+    </div>
+    <div style="padding:16px 0;border-bottom:1px dashed var(--border)">
+      <div class="pl-row"><span class="pl-label">Oil Change 5W-30 (4L)</span><span class="pl-val">3,500</span></div>
+    </div>
+    <div style="padding:16px 0;border-bottom:1px dashed var(--border)">
+      <div class="pl-row"><span class="pl-label">Subtotal</span><span class="pl-val">KSh 3,500</span></div>
+      <div class="pl-row"><span class="pl-label">VAT 16%</span><span class="pl-val">KSh 560</span></div>
+      <div class="pl-row total"><span>TOTAL</span><span class="pl-val up" style="font-size:18px">KSh 4,060</span></div>
+    </div>
+    <div style="padding:16px 0;text-align:center">
+      <div style="font-size:11px;color:var(--muted)">Paid via M-Pesa · Served by Ali Hassan</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Thank you for your business!</div>
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="toast('Receipt sent to printer','success')">🖨 Print Receipt</button>
+  </div>
+</div>
+
+<!-- QUOTE MODAL -->
+<div class="modal-overlay" id="quote-modal">
+  <div class="modal">
+    <div class="modal-title">New Quotation <button class="modal-close" onclick="closeModal('quote-modal')">✕ Close</button></div>
+    <div class="form-grid">
+      <div class="field"><label>Customer Name</label><input placeholder="Customer name"></div>
+      <div class="field"><label>Car Plate</label><input placeholder="e.g. KDA 123A"></div>
+      <div class="field"><label>Car Make</label><input placeholder="e.g. Nissan X-Trail"></div>
+      <div class="field"><label>Valid Until</label><input type="date"></div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:8px">SERVICES TO QUOTE</div>
+    <div class="line-items">
+      <div class="line-item-row line-item-header"><span>SERVICE</span><span>QTY</span><span>PRICE</span><span>TOTAL</span><span></span></div>
+      <div class="line-item-row">
+        <select style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-size:12px;width:100%"><option>Oil Change 10W-40</option><option>Wheel Alignment</option><option>Wheel Balancing x4</option></select>
+        <input type="number" value="1" style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-size:12px;width:100%">
+        <input type="number" value="4200" style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-size:12px;width:100%">
+        <span style="font-family:'DM Mono',monospace;font-size:12px;padding:6px">4,200</span>
+        <button class="remove-btn">×</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
+      <button class="btn btn-ghost" onclick="closeModal('quote-modal')">Cancel</button>
+      <button class="btn btn-ghost" onclick="toast('Quotation sent via WhatsApp!','success');closeModal('quote-modal')">📱 Send via WhatsApp</button>
+      <button class="btn btn-primary" onclick="toast('Quotation saved!','success');closeModal('quote-modal')">Save Quote</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const titles = {
+  'dashboard':'Dashboard','service-mgmt':'Service Management','pending-jobs':'Pending Jobs',
+  'cashiering':'Service Cashiering','direct-sales':'Direct Sales','quotations':'Quotations',
+  'stock':'Stock Control','imports':'Oil Imports','vehicles':'Vehicles P&L','customers':'Customers',
+  'accounts':'Account Management','pl':'Profit & Loss','reports':'Reports','search':'Search','settings':'Settings'
+};
+
+function goto(id) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMatch = Array.from(document.querySelectorAll('.nav-item')).find(n => n.getAttribute('onclick')?.includes(id));
+  if(navMatch) navMatch.classList.add('active');
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const sec = document.getElementById('sec-'+id);
+  if(sec) sec.classList.add('active');
+  document.getElementById('page-title').textContent = titles[id] || id;
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open'); });
+});
+
+function toast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+function saveJobCard() {
+  const plate = document.getElementById('jc-plate').value || 'KXX 000A';
+  closeModal('job-modal');
+  toast('Job card #JC-0044 created for ' + plate,'success');
+  const tbody = document.getElementById('dashboard-jobs');
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>${plate}</td><td>Oil Change</td><td>Ali</td><td><span class="badge badge-orange">Pending</span></td><td style="font-family:'DM Mono',monospace">3,500</td>`;
+  tbody.prepend(row);
+}
+
+function addLineItem() {
+  const container = document.getElementById('line-items');
+  const row = document.createElement('div');
+  row.className = 'line-item-row';
+  row.innerHTML = `
+    <select style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-size:12px;width:100%">
+      <option>Oil Change 5W-30</option><option>Oil Change 10W-40</option><option>Wheel Alignment</option><option>Wheel Balancing x4</option>
+    </select>
+    <input type="number" value="1" style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-size:12px;width:100%">
+    <input type="number" value="2000" style="background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-size:12px;width:100%">
+    <span style="font-family:'DM Mono',monospace;font-size:12px;padding:6px">2,000</span>
+    <button class="remove-btn" onclick="this.closest('.line-item-row').remove()">×</button>`;
+  container.appendChild(row);
+}
+
+function completeJob() { toast('Job marked complete — sent to cashier','success'); }
+function collectPayment() { closeModal('cashiering'); toast('Payment collected — receipt printed','success'); showReceipt(); }
+function sendSTK() { toast('M-Pesa STK Push sent to 0712 345 678 📲','success'); }
+function showReceipt() { openModal('receipt-modal'); }
+function revertJob() { toast('Job card reverted to pending status','success'); }
+function convertQuote() { toast('Quotation converted to job card!','success'); goto('service-mgmt'); }
+function sendReminder() { toast('SMS reminder sent to Grace Njoki 📱','success'); }
+function sendWhatsApp() { toast('Daily report sent to owner WhatsApp ✅','success'); }
+
+function doSearch(val) {
+  const results = document.getElementById('search-results');
+  if(!val.trim()) { results.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px;font-size:13px">Type to search across all records</div>'; return; }
+  const data = [
+    {type:'Job Card',ref:'#JC-0041',detail:'KDH 234A · Hassan Osman · Oil Change · KSh 3,500'},
+    {type:'Customer',ref:'Hassan Osman',detail:'0712 345 678 · KDH 234A · Toyota Corolla'},
+    {type:'Job Card',ref:'#JC-0040',detail:'KBC 001K · Amina Wanjiru · Wheel Alignment · KSh 2,000'},
+    {type:'Import',ref:'#IMP-007',detail:'Dubai Lubricants · 500L · KSh 372/L landed'},
+    {type:'Stock',ref:'Castrol 10W-40',detail:'18L remaining · KSh 380/L cost · LOW STOCK'},
+  ];
+  const matches = data.filter(d => (d.ref+d.detail+d.type).toLowerCase().includes(val.toLowerCase()));
+  if(!matches.length) { results.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px;font-size:13px">No results found</div>'; return; }
+  results.innerHTML = `<div class="table-wrap"><table><thead><tr><th>TYPE</th><th>REFERENCE</th><th>DETAIL</th></tr></thead><tbody>${
+    matches.map(m => `<tr><td><span class="badge badge-blue">${m.type}</span></td><td style="font-family:'DM Mono',monospace;color:var(--accent)">${m.ref}</td><td style="color:var(--muted);font-size:12px">${m.detail}</td></tr>`).join('')
+  }</tbody></table></div>`;
+}
+
+// Close modals on escape
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+});
+
+// ONE-TIME VIEW LOGIC
+const OTV_KEY = 'wsp_otv_' + location.pathname.split('/').pop();
+const OTV_DURATION_SECS = 600;
+const DEV_BYPASS_KEY = 'essacore_dev_bypass';
+const DEV_PARAM = new URLSearchParams(location.search).get('dev');
+const DEV_MODE = localStorage.getItem(DEV_BYPASS_KEY) === '1' || DEV_PARAM === '1';
+
+function otvShowExpired() {
+  document.getElementById('otv-gate').style.display = 'none';
+  const exp = document.getElementById('otv-expired');
+  exp.style.display = 'flex';
+}
+
+function otvShowApp(expiresAt) {
+  document.getElementById('otv-gate').style.display = 'none';
+  document.getElementById('otv-expired').style.display = 'none';
+  const app = document.getElementById('app-wrap');
+  app.style.display = 'flex';
+  app.style.opacity = '0';
+  app.style.transition = 'opacity 0.5s ease';
+  setTimeout(() => { app.style.opacity = '1'; }, 60);
+
+  let secs = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
+  const tick = setInterval(() => {
+    secs--;
+    const el = document.getElementById('otv-countdown');
+    if (el) {
+      const m = Math.floor(secs / 60), s = secs % 60;
+      el.textContent = '\u{1F512} Auto-locks in ' + m + ':' + String(s).padStart(2,'0');
+    }
+    if (secs <= 0) {
+      clearInterval(tick);
+      try { localStorage.setItem(OTV_KEY, JSON.stringify({ status: 'expired', expiredAt: Date.now() })); } catch(e) {}
+      otvShowExpired();
+    }
+  }, 1000);
+
+  // inject countdown into topbar
+  const tb = document.querySelector('.topbar-right');
+  if (tb) {
+    const badge = document.createElement('span');
+    badge.id = 'otv-countdown';
+    badge.style.cssText = 'font-family:"DM Mono",monospace;font-size:11px;color:var(--accent2);white-space:nowrap;margin-right:4px;';
+    badge.textContent = '\u{1F512} Auto-locks in 10:00';
+    tb.prepend(badge);
+  }
+}
+
+function otvOpen() {
+  if (DEV_MODE) {
+    const exp = Date.now() + (OTV_DURATION_SECS * 1000);
+    otvShowApp(exp);
+    return;
+  }
+  const btn = document.getElementById('otv-open-btn');
+  const bar = document.getElementById('otv-bar');
+  btn.textContent = 'Opening...';
+  btn.disabled = true;
+  bar.style.display = 'block';
+  const fill = document.getElementById('otv-fill');
+  setTimeout(() => { fill.style.width = '0%'; }, 30);
+  try {
+    const expiresAt = Date.now() + (OTV_DURATION_SECS * 1000);
+    localStorage.setItem(OTV_KEY, JSON.stringify({ status: 'active', viewedAt: Date.now(), expiresAt: expiresAt }));
+  } catch(e) {}
+  setTimeout(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem(OTV_KEY) || '{}');
+      otvShowApp(data.expiresAt || (Date.now() + (OTV_DURATION_SECS * 1000)));
+    } catch(e) {
+      otvShowApp(Date.now() + (OTV_DURATION_SECS * 1000));
+    }
+  }, 1700);
+}
+
+function expireOnLeave() {
+  if (DEV_MODE) return;
+  try {
+    const raw = localStorage.getItem(OTV_KEY);
+    const data = raw ? JSON.parse(raw) : null;
+    if (data && data.status === 'active') {
+      localStorage.setItem(OTV_KEY, JSON.stringify({ status: 'expired', expiredAt: Date.now() }));
+    }
+  } catch(e) {}
+}
+window.addEventListener('pagehide', expireOnLeave);
+window.addEventListener('beforeunload', expireOnLeave);
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (DEV_PARAM === '1') {
+    try { localStorage.setItem(DEV_BYPASS_KEY, '1'); } catch(e) {}
+  }
+  if (DEV_PARAM === '0') {
+    try { localStorage.removeItem(DEV_BYPASS_KEY); } catch(e) {}
+  }
+  if (DEV_MODE) {
+    document.getElementById('otv-gate').style.display = 'none';
+    document.getElementById('otv-expired').style.display = 'none';
+    const app = document.getElementById('app-wrap');
+    app.style.display = 'flex';
+    const tb = document.querySelector('.topbar-right');
+    if (tb && !document.getElementById('otv-dev-badge')) {
+      const badge = document.createElement('span');
+      badge.id = 'otv-dev-badge';
+      badge.style.cssText = 'font-family:"DM Mono",monospace;font-size:11px;color:var(--accent3);white-space:nowrap;margin-right:4px;';
+      badge.textContent = 'DEV MODE';
+      tb.prepend(badge);
+    }
+    return;
+  }
+  try {
+    const raw = localStorage.getItem(OTV_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data.status === 'expired') { otvShowExpired(); return; }
+      if (data.status === 'active') {
+        if (Date.now() < (data.expiresAt || 0)) { otvShowApp(data.expiresAt); return; }
+        localStorage.setItem(OTV_KEY, JSON.stringify({ status: 'expired', expiredAt: Date.now() }));
+        otvShowExpired();
+        return;
+      }
+    }
+  } catch(e) {}
+});
+</script>
+<script src="./mvp-domain-customizer.js"></script>
+</div><!-- /app-wrap -->
+</body>
+</html>

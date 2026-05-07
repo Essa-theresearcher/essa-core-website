@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jama Logistics - Dashboard</title>
+  <style>
+    :root{
+      --bg:#f3f5f8;--panel:#ffffff;--line:#dbe2ea;--muted:#6c7685;--text:#1f2937;
+      --green:#16c172;--green-soft:#dff5ea;--btn:#12ba6a;
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif}
+    .app{display:grid;grid-template-columns:172px 1fr;min-height:100vh}
+    .sidebar{background:#f1f4f7;border-right:1px solid var(--line);display:flex;flex-direction:column}
+    .brand{padding:14px 10px;border-bottom:1px solid var(--line)}
+    .brand-row{display:flex;gap:9px;align-items:center}
+    .badge{width:30px;height:30px;border-radius:9px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem}
+    .name{font-size:.9rem;font-weight:600}
+    .chip{margin-top:8px;display:inline-block;background:var(--green-soft);color:#179961;border-radius:999px;padding:4px 10px;font-size:.73rem;font-weight:600}
+    .nav{padding:14px 8px}
+    .nav h6{margin:0 0 8px;font-size:.62rem;letter-spacing:1px;color:#9aa3b2}
+    .item{padding:8px 10px;border-radius:8px;margin-bottom:4px;font-size:.9rem;color:#4e596b}
+    .item.active{background:#e6ebf2;color:#1f2937;font-weight:600}
+    .switch{margin-top:auto;padding:10px;border-top:1px solid var(--line)}
+    .switch button{width:100%;padding:8px;border-radius:8px;border:1px solid var(--line);background:#eef2f6;color:#5a6574}
+    .main{display:flex;flex-direction:column}
+    .top{height:42px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+    .top .title{font-weight:600}
+    .top .right{display:flex;gap:10px;align-items:center;color:#5f6b7c;font-size:.78rem}
+    .api{background:var(--green-soft);color:#0b8a57;padding:4px 8px;border-radius:6px;font-weight:600}
+    .content{padding:20px 22px}
+    .hero h1{margin:0;font-size:2rem;font-weight:700}
+    .hero p{margin:6px 0 16px;color:#5f6b7c}
+    .card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+    .card-h{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font-weight:600}
+    .card-b{padding:12px 14px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;font-size:.66rem;letter-spacing:.9px;color:#8a94a5;font-weight:700;margin-bottom:5px}
+    input,select{width:100%;height:34px;border:1px solid #d5dde7;border-radius:8px;padding:0 11px;background:#f5f8fc;color:#2a3444}
+    .row{margin-top:10px}
+    .line{display:flex;align-items:center;gap:12px;margin-top:8px}
+    .btn{height:36px;border:0;border-radius:8px;padding:0 16px;font-weight:700;cursor:pointer}
+    .btn.green{background:var(--btn);color:#07311f}
+    .btn.gray{background:#e8edf4;color:#667284}
+    .note{color:#7a8595;font-size:.83rem}
+    @media (max-width: 980px){.app{grid-template-columns:1fr}.sidebar{display:none}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-row">
+          <div class="badge">JL</div>
+          <div class="name">Jama Logistics</div>
+        </div>
+        <div class="chip">● Admin</div>
+      </div>
+      <div class="nav">
+        <h6>NAVIGATION</h6>
+        <div class="item active">Dashboard</div>
+        <div class="item">Truck accounts</div>
+        <div class="item">Activity log</div>
+        <div class="item">Alerts</div>
+        <div class="item">Others</div>
+      </div>
+      <div class="switch"><button>↪ Switch portal</button></div>
+    </aside>
+    <main class="main">
+      <div class="top">
+        <div class="title">Dashboard</div>
+        <div class="right"><span class="api">API online (DB down)</span><span>17:07</span><strong>Admin portal</strong></div>
+      </div>
+      <div class="content">
+        <div class="hero">
+          <h1>Fleet overview</h1>
+          <p>April 2026 - Tanzania -> Zambia corridor</p>
+        </div>
+        <section class="card">
+          <div class="card-h">
+            <span>Jama admin controls</span>
+            <span style="font-size:.85rem;color:#6a7585;font-weight:600">Create users and trucks</span>
+          </div>
+          <div class="card-b">
+            <div class="grid">
+              <div>
+                <label>ADMIN EMAIL</label>
+                <input value="admin@jama.local" />
+              </div>
+              <div>
+                <label>ADMIN PASSWORD</label>
+                <input type="password" value="password123" />
+              </div>
+            </div>
+            <div class="line">
+              <button class="btn green" id="connectBtn">Connect admin session</button>
+              <span id="sessionState" class="note">Not connected</span>
+            </div>
+
+            <div class="grid row">
+              <div>
+                <label>NEW USER NAME</label>
+                <input id="newUserName" value="Logistics Officer" />
+              </div>
+              <div>
+                <label>NEW USER EMAIL</label>
+                <input id="newUserEmail" value="logistics@jama.local" />
+              </div>
+              <div>
+                <label>USER PASSWORD</label>
+                <input id="newUserPass" value="ChangeMe123!" />
+              </div>
+              <div>
+                <label>ROLE</label>
+                <select id="newUserRole"><option>logistics</option><option>dispatcher</option><option>viewer</option></select>
+              </div>
+            </div>
+            <div class="line"><button class="btn gray" id="createUserBtn">Create user</button><span id="userMsg" class="note"></span></div>
+
+            <div class="grid row">
+              <div>
+                <label>TRUCK PLATE</label>
+                <input id="truckPlate" value="ZAM-5001" />
+              </div>
+              <div>
+                <label>TRUCK MODEL</label>
+                <input id="truckModel" value="Volvo FH" />
+              </div>
+            </div>
+            <div class="line"><button class="btn gray" id="createTruckBtn">Create truck</button><span id="truckMsg" class="note"></span></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script>
+    const state = { connected: false, users: [], trucks: [] };
+    document.getElementById("connectBtn").addEventListener("click", () => {
+      state.connected = !state.connected;
+      document.getElementById("sessionState").textContent = state.connected ? "Connected" : "Not connected";
+      document.getElementById("sessionState").style.color = state.connected ? "#0b8a57" : "#7a8595";
+    });
+    document.getElementById("createUserBtn").addEventListener("click", () => {
+      const name = document.getElementById("newUserName").value.trim();
+      const email = document.getElementById("newUserEmail").value.trim();
+      const role = document.getElementById("newUserRole").value;
+      if (!name || !email) return;
+      state.users.push({ name, email, role });
+      document.getElementById("userMsg").textContent = "User created: " + name;
+      document.getElementById("userMsg").style.color = "#0b8a57";
+    });
+    document.getElementById("createTruckBtn").addEventListener("click", () => {
+      const plate = document.getElementById("truckPlate").value.trim();
+      const model = document.getElementById("truckModel").value.trim();
+      if (!plate || !model) return;
+      state.trucks.push({ plate, model });
+      document.getElementById("truckMsg").textContent = "Truck created: " + plate;
+      document.getElementById("truckMsg").style.color = "#0b8a57";
+    });
+  </script>
+</body>
+</html>
