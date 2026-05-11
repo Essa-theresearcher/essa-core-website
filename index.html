@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://essa-theresearcher.github.io/essa-core/" />
+
   <title>Essa Core | Software Engineering Partner</title>
   <meta name="description" content="Essa Core builds modern SaaS platforms and internal business systems with reliability, security, and long-term support." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -109,8 +111,11 @@
     .form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .field{display:flex;flex-direction:column;gap:5px}
     .field label{font-size:.78rem;color:var(--muted);font-weight:600}
-    .field input,.field select,.field textarea{height:42px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;color:var(--text);font-family:inherit}
-    .field textarea{height:94px;padding-top:10px;resize:vertical}
+    .field input,.field textarea{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;color:var(--text);font-family:inherit;font-size:16px;-webkit-appearance:none;appearance:none}
+    .field select{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;color:var(--text);font-family:inherit;font-size:16px}
+    .field textarea{min-height:120px;height:auto;padding-top:12px;resize:vertical;line-height:1.5}
+    .form-actions{display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;align-items:stretch;justify-content:flex-start}
+    .form-actions .btn,.form-actions a.btn{flex:1 1 160px;justify-content:center;text-align:center;box-sizing:border-box}
     .full{grid-column:1 / -1}
     .cta h3{margin:0 0 8px;font-size:1.9rem}
     .cta p{margin:0 0 16px;color:#dce7ff;max-width:760px;line-height:1.75}
@@ -131,11 +136,21 @@
       .hero-grid,.cards,.projects,.process,.arch,.faq,.case-grid,.team-grid,.logo-strip{grid-template-columns:1fr 1fr}
       .kpis{grid-template-columns:1fr 1fr}
     }
+    @media (max-width:900px){
+      #contact .form{grid-template-columns:1fr}
+    }
     @media (max-width:760px){
       .nav-links{display:none}
       .hero-grid,.cards,.projects,.process,.arch,.faq,.form,.case-grid,.team-grid,.logo-strip{grid-template-columns:1fr}
       .kpis{grid-template-columns:1fr}
       .sec-head{flex-direction:column;align-items:flex-start}
+      .wrap{padding:0 16px}
+      .nav-row{height:auto;min-height:60px;padding:10px 0;gap:10px;flex-wrap:wrap}
+      .nav-cta{font-size:.85rem;padding:10px 12px}
+      .cta{padding:22px 16px;border-radius:14px}
+      .qualify{padding:14px;border-radius:14px}
+      .form-actions{flex-direction:column}
+      .form-actions .btn,.form-actions a.btn{flex:1 1 auto;width:100%;min-height:48px}
     }
   </style>
 </head>
@@ -387,7 +402,6 @@
       <div class="cta">
         <h3>Book a qualified discovery call</h3>
         <p>Share your project scope first. We use this to propose fit, timeline band, and recommended engagement model.</p>
-        <p style="margin:0 0 16px;color:#eaf0ff;line-height:1.8"><strong>Typical MVP start:</strong> 2-4 weeks from approved scope.<br><strong>Most MVP engagements:</strong> USD 5,000-25,000 depending on complexity.</p>
         <form class="qualify" onsubmit="handleDiscoverySubmit(event)">
           <div class="form">
             <div class="field"><label>Company</label><input required placeholder="Your company name" /></div>
@@ -397,7 +411,7 @@
             <div class="field"><label>Budget Band</label><select><option>$2k-$5k</option><option>$5k-$15k</option><option>$15k-$50k</option><option>$50k+</option></select></div>
             <div class="field"><label>Primary Domain</label><select><option>Education</option><option>Healthcare</option><option>Logistics</option><option>HR/Workforce</option><option>Other</option></select></div>
             <div class="field full"><label>Project Brief</label><textarea placeholder="Describe the workflow you want to digitize, current pain points, and expected outcomes."></textarea></div>
-            <div class="field full" style="display:flex;flex-direction:row;gap:10px;align-items:center;justify-content:flex-start">
+            <div class="field full form-actions">
               <button class="btn btn-primary" type="submit">Submit & Book on WhatsApp</button>
               <a class="btn btn-ghost" href="https://calendly.com/">Schedule on Calendar</a>
               <a class="btn btn-ghost" href="mailto:hello@essacore.co.ke">Email Instead</a>
